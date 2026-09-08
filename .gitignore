@@ -2,3 +2,4 @@ node_modules/
 leads.log
 .DS_Store
 tests/mock-*.json
+public/
