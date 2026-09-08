@@ -40,7 +40,7 @@ await page.route(`${SB}/rest/v1/**`, async (route) => {
 page.on('pageerror', (e) => console.log('pageerror:', e.message));
 const fail = (msg) => { console.log('FAIL:', msg); process.exitCode = 1; };
 
-await page.goto('http://127.0.0.1:8080/', { waitUntil: 'networkidle' });
+await page.goto(process.env.TEST_URL || 'http://127.0.0.1:8080/', { waitUntil: 'networkidle' });
 const fontLoaded = await page.evaluate(() => document.fonts.check('800 24px "Open Sans"'));
 console.log('Open Sans 800 loaded:', fontLoaded);
 if (!fontLoaded) fail('self-hosted Open Sans did not load');

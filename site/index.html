@@ -9,9 +9,11 @@
 <script>
 // Deployment configuration - edit values here, not inside the app code below.
 window.EXITIQ_CONFIG = {
-  // Same-origin mail relay (send-lead.php on this webspace). Empty disables sending;
-  // the UI then reports "delivery pending" and offers the mailto fallback.
-  leadEndpoint: 'send-lead.php',
+  // Same-origin mail relays, tried in order until one accepts the POST:
+  // send-lead.php on Strato, /api/send-lead on Vercel. An endpoint that is
+  // missing on the current host (404/405) is skipped; if none accepts, the UI
+  // reports "delivery pending" and offers the mailto fallback.
+  leadEndpoints: ['send-lead.php', '/api/send-lead'],
   // GTM ExitIQ Supabase project: question bank (read) and lead log (insert-only).
   // The key is the publishable anon key - safe to ship in the browser; RLS decides access.
   supabaseUrl: 'https://drkperzvmlkprawmzdzp.supabase.co',
@@ -1511,7 +1513,7 @@ class Component extends DCLogic {
   LEAD_RECIPIENT = 'contact@globaltechmergers.com';
   // All deployment values come from window.EXITIQ_CONFIG in the <head>.
   CONFIG = (typeof window !== 'undefined' && window.EXITIQ_CONFIG) || {};
-  LEAD_ENDPOINT = this.CONFIG.leadEndpoint || '';
+  LEAD_ENDPOINTS = this.CONFIG.leadEndpoints || (this.CONFIG.leadEndpoint ? [this.CONFIG.leadEndpoint] : []);
   SUPABASE_URL = this.CONFIG.supabaseUrl || '';
   SUPABASE_KEY = this.CONFIG.supabaseKey || '';
 
@@ -1590,15 +1592,25 @@ class Component extends DCLogic {
       window.localStorage.setItem(this.LEADS, JSON.stringify([payload].concat(prev)));
     } catch (e) { /* storage unavailable */ }
     this.recordLead(payload);
-    if (!this.LEAD_ENDPOINT) { this.setState({ leadStatus: 'pending' }); return; }
+    if (!this.LEAD_ENDPOINTS.length) { this.setState({ leadStatus: 'pending' }); return; }
     this.setState({ leadStatus: 'sending' });
-    fetch(this.LEAD_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: recipient || this.LEAD_RECIPIENT, ...payload }),
-    })
-      .then((r) => this.setState({ leadStatus: r.ok ? 'sent' : 'pending' }))
-      .catch(() => this.setState({ leadStatus: 'pending' }));
+    const body = JSON.stringify({ to: recipient || this.LEAD_RECIPIENT, ...payload });
+    const tryPost = (i) => {
+      if (i >= this.LEAD_ENDPOINTS.length) { this.setState({ leadStatus: 'pending' }); return; }
+      fetch(this.LEAD_ENDPOINTS[i], {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      })
+        .then((r) => {
+          if (r.ok) this.setState({ leadStatus: 'sent' });
+          // Endpoint not present on this host: fall through to the next one.
+          else if (r.status === 404 || r.status === 405 || r.status === 501) tryPost(i + 1);
+          else this.setState({ leadStatus: 'pending' });
+        })
+        .catch(() => tryPost(i + 1));
+    };
+    tryPost(0);
   }
 
   componentDidMount() {

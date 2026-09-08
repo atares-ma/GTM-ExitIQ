@@ -67,10 +67,10 @@ touches the browser or the repo.
 
 ## If the package turns out to have no PHP
 
-Use `alternatives/vercel/send-lead.ts` (Vercel serverless + `nodemailer` over
-`smtp.strato.de:465`, password stored as a Vercel env var) and point
-`leadEndpoint` in `site/index.html` at that function's URL. The payload format
-is identical.
+Deploy the repo on Vercel instead (`docs/DEPLOY-VERCEL.md`): the serverless
+function in `api/send-lead.ts` sends the same mails over `smtp.strato.de:465`
+with the mailbox password stored as a Vercel env var. The page already tries
+`/api/send-lead` automatically when `send-lead.php` is not there.
 
 ## Operations
 

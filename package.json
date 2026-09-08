@@ -1,0 +1,8 @@
+{
+  "name": "gtm-exitiq",
+  "private": true,
+  "description": "GTM ExitIQ - static site in site/, optional Vercel mail relay in api/",
+  "dependencies": {
+    "nodemailer": "^7.0.0"
+  }
+}

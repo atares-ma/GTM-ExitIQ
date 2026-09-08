@@ -17,9 +17,10 @@ Flow: landing → sector → company details → ~35-45 questions → on-screen 
 | `site/.htaccess` | Blocks public access to `leads.log`, forces HTTPS. |
 | `site/vendor/` | Self-hosted React 18.3.1 (SHA-384 verified against the SRI hashes in `support.js`) and Open Sans woff2 — no unpkg, no Google Fonts request (GDPR). |
 | `supabase/migrations/` | Schema + seed applied to the GTM ExitIQ Supabase project (`drkperzvmlkprawmzdzp`). |
+| `vercel.json`, `api/` | Vercel support: serves `site/` with security headers, plus a serverless mail relay (`/api/send-lead`) used when the PHP one isn't there. See `docs/DEPLOY-VERCEL.md`. |
 | `docs/DEPLOY-STRATO.md` | Step-by-step Strato deployment, and the checklist of what is needed from the Strato panel. |
+| `docs/DEPLOY-VERCEL.md` | Deploying on Vercel (previews or as alternative host). |
 | `docs/GTM-ExitIQ-handoff.md` | Original design-handoff notes. |
-| `alternatives/vercel/` | Serverless alternative for the mail relay (only needed if the Strato package has no PHP). |
 | `design/` | The design-canvas source files the page was built from. |
 
 ## Architecture
@@ -56,9 +57,11 @@ Everything deployment-specific sits in one block at the top of `site/index.html`
 
 ```js
 window.EXITIQ_CONFIG = {
-  leadEndpoint: 'send-lead.php',   // '' disables mail sending (UI says "pending")
+  // mail relays, tried in order (PHP on Strato, serverless on Vercel);
+  // [] disables mail sending (UI says "pending")
+  leadEndpoints: ['send-lead.php', '/api/send-lead'],
   supabaseUrl:  'https://drkperzvmlkprawmzdzp.supabase.co',
-  supabaseKey:  'sb_publishable_…',// publishable anon key - safe in the browser
+  supabaseKey:  'sb_publishable_…',  // publishable anon key - safe in the browser
 };
 ```
 
