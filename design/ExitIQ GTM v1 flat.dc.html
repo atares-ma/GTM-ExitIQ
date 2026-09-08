@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { font-family: Lato, "Helvetica Neue", Arial, sans-serif; background: #F5F7F9; }
+  * { box-sizing: border-box; }
+  a { color: #37627F; text-decoration: none; }
+  a:hover { color: #0F283E; text-decoration: underline; }
+  @keyframes gtmFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; background: #F5F7F9; color: #0F283E; font-family: Lato, 'Helvetica Neue', Arial, sans-serif;">
+
+  <div style="background: #0F283E; border-bottom: 1px solid rgba(255,255,255,0.1);">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+      <div style="display: flex; align-items: center; gap: 16px; min-width: 0;">
+        <img src="assets/gtm-logo-white.png" alt="Global Tech Mergers" style="height: 58px; width: auto; display: block;" />
+        <span style="width: 1px; height: 26px; background: rgba(255,255,255,0.22); display: block;"></span>
+        <span style="font-size: 17px; font-weight: 900; letter-spacing: 0.02em; color: #FFFFFF;">Exit<span style="font-weight: 300;">IQ</span></span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.62); white-space: nowrap;">{{ stepLabel }}</span>
+        <sc-if value="{{ showRestart }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ restart }}" style="min-height: 34px; padding: 0 14px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.28); background: transparent; color: #FFFFFF; font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: rgba(255,255,255,0.1);">Start over</button>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+    <div>
+      <div style="background: #0F283E; color: #FFFFFF; position: relative; overflow: hidden;">
+        <img src="assets/gtm-globe-white.png" alt="" style="position: absolute; right: -60px; top: -40px; height: 460px; width: auto; opacity: 0.06; pointer-events: none;" />
+        <div style="max-width: 1120px; margin: 0 auto; padding: 76px 24px 84px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 56px; align-items: center; position: relative;">
+          <div>
+            <p style="margin: 0 0 22px; font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #99A8B4;">Global Tech Mergers · Exit Readiness</p>
+            <h1 style="margin: 0 0 22px; font-size: clamp(34px, 4vw, 52px); line-height: 1.08; font-weight: 300; letter-spacing: -0.015em; text-wrap: pretty;">How ready is your company <span style="font-weight: 900;">for a transaction?</span></h1>
+            <p style="margin: 0 0 30px; max-width: 34em; font-size: 17px; line-height: 1.65; color: rgba(255,255,255,0.82);">Twenty-one questions across the seven dimensions every professional buyer examines in due diligence. You get your readiness position on screen, immediately — and a route to the Global Tech Mergers partner in your market.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+              <button onClick="{{ goSector }}" style="min-height: 52px; padding: 0 30px; border: 1px solid #FFFFFF; border-radius: 2px; background: #FFFFFF; color: #0F283E; font-family: inherit; font-size: 14px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;" style-hover="background: #DDE3E8; border-color: #DDE3E8;">Start the assessment</button>
+              <span style="font-size: 13px; color: rgba(255,255,255,0.6);">No sign-up · result on screen · approx. 8 minutes</span>
+            </div>
+          </div>
+          <div style="border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.05); padding: 26px;">
+            <p style="margin: 0 0 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #99A8B4; text-align: center;">9-Zone Positioning Matrix</p>
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px;">
+              <sc-for list="{{ previewCells }}" as="cell" hint-placeholder-count="9">
+                <div style="aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; padding: 6px; text-align: center; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.03);">
+                  <span style="font-size: 11px; line-height: 1.25; font-weight: 700; color: {{ cell.color }};">{{ cell.name }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <p style="margin: 18px 0 0; font-size: 12px; color: rgba(255,255,255,0.62); text-align: center;">Exit readiness (horizontal) against value creation potential (vertical).</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #FFFFFF; border-bottom: 1px solid #E3E7EB;">
+        <div style="max-width: 1120px; margin: 0 auto; padding: 56px 24px 60px;">
+          <p style="margin: 0 0 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #999999;">What gets assessed</p>
+          <h2 style="margin: 0 0 32px; font-size: 28px; font-weight: 300; letter-spacing: -0.01em;">Seven pillars, scored the way a buyer scores them</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: #E3E7EB; border: 1px solid #E3E7EB;">
+            <sc-for list="{{ pillarCards }}" as="p" hint-placeholder-count="7">
+              <div style="background: #FFFFFF; padding: 22px 20px;">
+                <p style="margin: 0 0 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: #999999;">{{ p.num }}</p>
+                <h3 style="margin: 0 0 8px; font-size: 15px; font-weight: 700; line-height: 1.35;">{{ p.label }}</h3>
+                <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #5A6875;">{{ p.desc }}</p>
+              </div>
+            </sc-for>
+            <div style="background: #0F283E; padding: 22px 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px;">
+              <div>
+                <p style="margin: 0 0 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: #99A8B4;">Result</p>
+                <h3 style="margin: 0 0 8px; font-size: 15px; font-weight: 700; color: #FFFFFF; line-height: 1.35;">Your position, on screen</h3>
+                <p style="margin: 0; font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.76);">Scores per pillar, your matrix zone and the gaps a buyer would price.</p>
+              </div>
+              <button onClick="{{ goSector }}" style="align-self: flex-start; min-height: 40px; padding: 0 18px; border: 1px solid rgba(255,255,255,0.5); border-radius: 2px; background: transparent; color: #FFFFFF; font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;" style-hover="background: #FFFFFF; color: #0F283E;">Begin</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #0F283E; color: #FFFFFF; position: relative; overflow: hidden;">
+        <img src="assets/gtm-globe-white.png" alt="" style="position: absolute; left: -70px; bottom: -80px; height: 400px; width: auto; opacity: 0.05; pointer-events: none;" />
+        <div style="max-width: 1120px; margin: 0 auto; padding: 72px 24px 78px; position: relative;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 48px; align-items: start;">
+            <div>
+              <p style="margin: 0 0 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #99A8B4;">Who is behind ExitIQ</p>
+              <h2 style="margin: 0 0 20px; font-size: clamp(26px, 2.8vw, 36px); line-height: 1.15; font-weight: 300; letter-spacing: -0.015em;">A premier network of <span style="font-weight: 700;">tech-focused M&amp;A boutiques</span> across Europe</h2>
+              <p style="margin: 0 0 18px; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.82); max-width: 34em;">Global Tech Mergers specialises in cross-border technology transactions, guiding founders and corporations from valuation to close. Each member is an independent boutique in its own market — the network is what carries a deal across borders.</p>
+              <p style="margin: 0; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.82); max-width: 34em;">ExitIQ is the network's readiness instrument. It applies the same criteria our partners apply when they prepare a technology company for sale, so a founder can see the picture before a buyer draws it for them.</p>
+            </div>
+            <div style="display: grid; gap: 1px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.14);">
+              <div style="background: #0F283E; padding: 24px 26px;">
+                <p style="margin: 0 0 8px; font-size: 15px; font-weight: 700;">Local partner, cross-border reach</p>
+                <p style="margin: 0; font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.74);">You deal with the boutique in your country and language; buyer access runs through the whole European network.</p>
+              </div>
+              <div style="background: #0F283E; padding: 24px 26px;">
+                <p style="margin: 0 0 8px; font-size: 15px; font-weight: 700;">Technology is the whole focus</p>
+                <p style="margin: 0; font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.74);">Software, IT services, HR tech and cybersecurity — sectors where the members transact repeatedly and know how buyers price them.</p>
+              </div>
+              <div style="background: #0F283E; padding: 24px 26px;">
+                <p style="margin: 0 0 8px; font-size: 15px; font-weight: 700;">Valuation through to close</p>
+                <p style="margin: 0; font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.74);">Preparation, buyer approach, negotiation and diligence handled as one process rather than handed off.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #F5F7F9;">
+        <div style="max-width: 1120px; margin: 0 auto; padding: 60px 24px 70px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px;">
+          <div>
+            <p style="margin: 0 0 10px; font-size: 40px; font-weight: 300; color: #0F283E; line-height: 1;">01</p>
+            <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: 700;">Pick your sector</h3>
+            <p style="margin: 0; font-size: 14px; line-height: 1.65; color: #5A6875;">Question weighting follows the sector — a SaaS buyer and an IT services buyer do not price the same things.</p>
+          </div>
+          <div>
+            <p style="margin: 0 0 10px; font-size: 40px; font-weight: 300; color: #0F283E; line-height: 1;">02</p>
+            <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: 700;">Answer 21 questions</h3>
+            <p style="margin: 0; font-size: 14px; line-height: 1.65; color: #5A6875;">Three answer levels per question, phrased as a buyer would describe what they find in diligence.</p>
+          </div>
+          <div>
+            <p style="margin: 0 0 10px; font-size: 40px; font-weight: 300; color: #0F283E; line-height: 1;">03</p>
+            <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: 700;">Talk to your local partner</h3>
+            <p style="margin: 0; font-size: 14px; line-height: 1.65; color: #5A6875;">If the result raises questions, we route you to the Global Tech Mergers member firm in your country.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isSector }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 60px 24px 80px; animation: gtmFade 0.3s ease-out;">
+      <div style="max-width: 40em;">
+        <h1 style="margin: 0 0 14px; font-size: 34px; font-weight: 300; letter-spacing: -0.015em;">Which sector describes your company?</h1>
+        <p style="margin: 0 0 36px; font-size: 16px; line-height: 1.65; color: #5A6875;">The question set and the scoring weights adapt to the sector you choose.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+        <sc-for list="{{ sectors }}" as="s" hint-placeholder-count="4">
+          <button onClick="{{ s.pick }}" style="text-align: left; padding: 26px 24px; border: 1px solid #E3E7EB; border-top: 3px solid #0F283E; background: #FFFFFF; cursor: pointer; font-family: inherit; display: flex; flex-direction: column; gap: 10px; min-height: 190px;" style-hover="border-color: #0F283E; box-shadow: 0 12px 28px rgba(15,40,62,0.1);">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #999999;">{{ s.num }}</span>
+            <span style="font-size: 18px; font-weight: 700; line-height: 1.3; color: #0F283E;">{{ s.label }}</span>
+            <span style="font-size: 14px; line-height: 1.6; color: #5A6875;">{{ s.desc }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="margin-top: 32px;">
+        <button onClick="{{ goLanding }}" style="min-height: 44px; padding: 0 18px; border: 1px solid #CBD3DA; border-radius: 2px; background: transparent; color: #5A6875; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer;" style-hover="border-color: #0F283E; color: #0F283E;">← Back</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isForm }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width: 760px; margin: 0 auto; padding: 60px 24px 80px; animation: gtmFade 0.3s ease-out;">
+      <h1 style="margin: 0 0 14px; font-size: 34px; font-weight: 300; letter-spacing: -0.015em;">A few details about the company</h1>
+      <p style="margin: 0 0 36px; font-size: 16px; line-height: 1.65; color: #5A6875;">Used to frame your result and, if you ask for it, to route you to the right Global Tech Mergers office. Nothing is published or shared without your say-so.</p>
+      <div style="background: #FFFFFF; border: 1px solid #E3E7EB; padding: 32px; display: grid; gap: 22px;">
+        <div style="display: grid; gap: 8px;">
+          <label style="font-size: 13px; font-weight: 700; letter-spacing: 0.04em;">Company name</label>
+          <input value="{{ form.company }}" onInput="{{ setCompany }}" placeholder="Acme Software GmbH" style="min-height: 48px; padding: 0 14px; border: 1px solid #CBD3DA; border-radius: 2px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #0F283E;" />
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 22px;">
+          <div style="display: grid; gap: 8px;">
+            <label style="font-size: 13px; font-weight: 700; letter-spacing: 0.04em;">Your name</label>
+            <input value="{{ form.contact }}" onInput="{{ setContact }}" placeholder="Full name" style="min-height: 48px; padding: 0 14px; border: 1px solid #CBD3DA; border-radius: 2px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #0F283E;" />
+          </div>
+          <div style="display: grid; gap: 8px;">
+            <label style="font-size: 13px; font-weight: 700; letter-spacing: 0.04em;">Email</label>
+            <input value="{{ form.email }}" onInput="{{ setEmail }}" placeholder="you@company.com" style="min-height: 48px; padding: 0 14px; border: 1px solid #CBD3DA; border-radius: 2px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #0F283E;" />
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 22px;">
+          <div style="display: grid; gap: 8px;">
+            <label style="font-size: 13px; font-weight: 700; letter-spacing: 0.04em;">Annual revenue</label>
+            <select value="{{ form.revenue }}" onChange="{{ setRevenue }}" style="min-height: 48px; padding: 0 12px; border: 1px solid #CBD3DA; border-radius: 2px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #0F283E;">
+              <sc-for list="{{ revenueBands }}" as="r" hint-placeholder-count="5">
+                <option value="{{ r }}">{{ r }}</option>
+              </sc-for>
+            </select>
+          </div>
+          <div style="display: grid; gap: 8px;">
+            <label style="font-size: 13px; font-weight: 700; letter-spacing: 0.04em;">Country</label>
+            <select value="{{ form.country }}" onChange="{{ setCountry }}" style="min-height: 48px; padding: 0 12px; border: 1px solid #CBD3DA; border-radius: 2px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #0F283E;">
+              <sc-for list="{{ countries }}" as="c" hint-placeholder-count="8">
+                <option value="{{ c }}">{{ c }}</option>
+              </sc-for>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: #F5F7F9; border-left: 3px solid #0F283E;">
+          <span style="font-size: 13px; line-height: 1.6; color: #5A6875;">Sector selected: <strong style="color: #0F283E;">{{ sectorLabel }}</strong></span>
+        </div>
+      </div>
+      <div style="margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px;">
+        <button onClick="{{ goSector }}" style="min-height: 48px; padding: 0 18px; border: 1px solid #CBD3DA; border-radius: 2px; background: transparent; color: #5A6875; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer;" style-hover="border-color: #0F283E; color: #0F283E;">← Back</button>
+        <button onClick="{{ startAssessment }}" style="min-height: 48px; padding: 0 28px; border: 1px solid #0F283E; border-radius: 2px; background: #0F283E; color: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;" style-hover="background: #1B3D5C; border-color: #1B3D5C;">Continue to questions</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isAssess }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; animation: gtmFade 0.3s ease-out;">
+      <div style="background: #FFFFFF; border: 1px solid #E3E7EB; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 12px;">
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5A6875;">Question {{ qNumber }} of {{ qTotal }}</span>
+          <span style="font-size: 12px; font-weight: 700; color: #999999;">{{ progressLabel }}</span>
+        </div>
+        <div style="height: 4px; background: #E3E7EB; overflow: hidden;">
+          <div style="height: 100%; background: {{ accent }}; width: {{ progressWidth }}; transition: width 0.25s ease;"></div>
+        </div>
+        <div style="margin-top: 16px; display: flex; flex-wrap: wrap; gap: 6px;">
+          <sc-for list="{{ pillarChips }}" as="chip" hint-placeholder-count="7">
+            <span style="padding: 5px 10px; border: 1px solid {{ chip.border }}; background: {{ chip.bg }}; color: {{ chip.color }}; font-size: 11px; font-weight: 700; letter-spacing: 0.06em;">{{ chip.label }}</span>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background: #FFFFFF; border: 1px solid #E3E7EB; border-top: 3px solid #0F283E; padding: 34px;">
+        <p style="margin: 0 0 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #999999;">{{ question.pillarLabel }}</p>
+        <h2 style="margin: 0 0 10px; font-size: 22px; font-weight: 700; line-height: 1.45; letter-spacing: -0.01em; text-wrap: pretty;">{{ question.q }}</h2>
+        <sc-if value="{{ question.info }}" hint-placeholder-val="{{ false }}">
+          <p style="margin: 0 0 26px; padding: 14px 16px; background: #F5F7F9; border-left: 3px solid #999999; font-size: 13px; line-height: 1.65; color: #5A6875;">{{ question.info }}</p>
+        </sc-if>
+        <div style="display: grid; gap: 10px; margin-top: 22px;">
+          <sc-for list="{{ question.opts }}" as="opt" hint-placeholder-count="3">
+            <button onClick="{{ opt.pick }}" style="display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%; padding: 18px 20px; border: 1px solid {{ opt.border }}; background: {{ opt.bg }}; cursor: pointer; font-family: inherit;" style-hover="border-color: #0F283E;">
+              <span style="flex-shrink: 0; width: 16px; height: 16px; margin-top: 3px; border-radius: 50%; border: 2px solid {{ opt.dotBorder }}; background: {{ opt.dot }};"></span>
+              <span style="font-size: 15px; line-height: 1.6; color: #0F283E;">{{ opt.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid #E3E7EB; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between;">
+          <button onClick="{{ prevQuestion }}" style="min-height: 48px; padding: 0 18px; border: 1px solid #CBD3DA; border-radius: 2px; background: transparent; color: #5A6875; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer;" style-hover="border-color: #0F283E; color: #0F283E;">← Previous</button>
+          <button onClick="{{ nextQuestion }}" style="min-height: 48px; padding: 0 28px; border: 1px solid {{ nextBorder }}; border-radius: 2px; background: {{ nextBg }}; color: {{ nextColor }}; font-family: inherit; font-size: 13px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; cursor: {{ nextCursor }};">{{ nextLabel }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+    <div style="animation: gtmFade 0.3s ease-out;">
+      <div style="background: #0F283E; color: #FFFFFF;">
+        <div style="max-width: 1120px; margin: 0 auto; padding: 56px 24px;">
+          <p style="margin: 0 0 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #99A8B4;">Exit readiness result · {{ resultDate }}</p>
+          <h1 style="margin: 0 0 8px; font-size: clamp(30px, 3.4vw, 42px); font-weight: 300; letter-spacing: -0.015em;">{{ companyName }}</h1>
+          <p style="margin: 0 0 34px; font-size: 15px; color: rgba(255,255,255,0.72);">{{ resultMeta }}</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.14);">
+            <div style="background: #0F283E; padding: 26px;">
+              <p style="margin: 0 0 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #99A8B4;">Exit readiness</p>
+              <p style="margin: 0; font-size: 46px; font-weight: 300; line-height: 1;">{{ xScore }}<span style="font-size: 18px; color: #99A8B4;">/100</span></p>
+            </div>
+            <div style="background: #0F283E; padding: 26px;">
+              <p style="margin: 0 0 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #99A8B4;">Value creation potential</p>
+              <p style="margin: 0; font-size: 46px; font-weight: 300; line-height: 1;">{{ yScore }}<span style="font-size: 18px; color: #99A8B4;">/100</span></p>
+            </div>
+            <div style="background: #0F283E; padding: 26px;">
+              <p style="margin: 0 0 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #99A8B4;">Your zone</p>
+              <p style="margin: 0; font-size: 24px; font-weight: 700; line-height: 1.2; color: {{ zoneColor }};">{{ zoneName }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="max-width: 1120px; margin: 0 auto; padding: 56px 24px 80px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; align-items: start;">
+        <div style="background: #FFFFFF; border: 1px solid #E3E7EB; padding: 28px;">
+          <p style="margin: 0 0 22px; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #999999;">Positioning matrix</p>
+          <div style="position: relative;">
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px;">
+              <sc-for list="{{ matrixCells }}" as="cell" hint-placeholder-count="9">
+                <div style="aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; padding: 8px; text-align: center; border: 1px solid {{ cell.border }}; background: {{ cell.bg }};">
+                  <span style="font-size: 11px; line-height: 1.3; font-weight: 700; color: {{ cell.color }};">{{ cell.name }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position: absolute; left: {{ dotLeft }}; bottom: {{ dotBottom }}; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; border: 3px solid #FFFFFF; background: {{ zoneColor }}; box-shadow: 0 4px 12px rgba(15,40,62,0.4);"></div>
+          </div>
+          <div style="margin-top: 14px; display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #999999;">
+            <span>Low</span><span>Exit readiness →</span><span>High</span>
+          </div>
+          <p style="margin: 22px 0 0; padding-top: 20px; border-top: 1px solid #E3E7EB; font-size: 14px; line-height: 1.7; color: #5A6875;">{{ zoneRec }}</p>
+        </div>
+
+        <div style="display: grid; gap: 32px;">
+          <div style="background: #FFFFFF; border: 1px solid #E3E7EB; padding: 28px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 24px;">
+              <p style="margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #999999;">Pillar scores</p>
+              <p style="margin: 0; font-size: 11px; font-weight: 700; color: #999999;">Buyer expectation 70</p>
+            </div>
+            <div style="display: grid; gap: 18px;">
+              <sc-for list="{{ pillarScores }}" as="p" hint-placeholder-count="7">
+                <div>
+                  <div style="display: flex; justify-content: space-between; gap: 12px; margin-bottom: 7px;">
+                    <span style="font-size: 13px; font-weight: 700;">{{ p.label }}</span>
+                    <span style="font-size: 13px; font-weight: 700; color: {{ p.color }};">{{ p.value }}</span>
+                  </div>
+                  <div style="position: relative; height: 8px; background: #EDF0F3;">
+                    <div style="height: 100%; width: {{ p.width }}; background: {{ p.color }}; transition: width 0.4s ease;"></div>
+                    <div style="position: absolute; left: 70%; top: -3px; bottom: -3px; width: 1px; background: #0F283E; opacity: 0.45;"></div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E3E7EB; border-left: 3px solid #999999; padding: 28px;">
+            <p style="margin: 0 0 18px; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #999999;">Where a buyer would push on price</p>
+            <div style="display: grid; gap: 16px;">
+              <sc-for list="{{ gaps }}" as="g" hint-placeholder-count="3">
+                <div style="display: flex; gap: 14px; align-items: flex-start;">
+                  <span style="flex-shrink: 0; font-size: 13px; font-weight: 900; color: #999999; min-width: 20px;">{{ g.num }}</span>
+                  <div>
+                    <p style="margin: 0 0 4px; font-size: 14px; font-weight: 700;">{{ g.label }}</p>
+                    <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #5A6875;">{{ g.note }}</p>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #FFFFFF; border-top: 1px solid #E3E7EB;">
+        <div style="max-width: 1120px; margin: 0 auto; padding: 56px 24px 70px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center;">
+          <div>
+            <p style="margin: 0 0 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #999999;">Next step</p>
+            <h2 style="margin: 0 0 14px; font-size: 28px; font-weight: 300; letter-spacing: -0.01em;">Discuss the result with the partner in {{ countryLabel }}</h2>
+            <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.7; color: #5A6875; max-width: 36em;">Global Tech Mergers is a network of tech-focused M&amp;A boutiques across Europe. Ask for an introduction and the member firm in your market will pick this result up with you — no obligation, no fee for the conversation.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+              <button onClick="{{ requestIntro }}" style="min-height: 52px; padding: 0 28px; border: 1px solid #0F283E; border-radius: 2px; background: #0F283E; color: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;" style-hover="background: #1B3D5C; border-color: #1B3D5C;">{{ introLabel }}</button>
+              <button onClick="{{ restart }}" style="min-height: 52px; padding: 0 22px; border: 1px solid #CBD3DA; border-radius: 2px; background: transparent; color: #5A6875; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer;" style-hover="border-color: #0F283E; color: #0F283E;">Run it again</button>
+            </div>
+            <sc-if value="{{ introSent }}" hint-placeholder-val="{{ false }}">
+              <p style="margin: 20px 0 0; padding: 14px 16px; background: #F5F7F9; border-left: 3px solid #0F283E; font-size: 14px; line-height: 1.6; color: #0F283E;">Request noted. The Global Tech Mergers office for {{ countryLabel }} will be in touch at {{ contactEmail }}.</p>
+            </sc-if>
+          </div>
+          <div style="background: #0F283E; padding: 34px; position: relative; overflow: hidden;">
+            <img src="assets/gtm-globe-white.png" alt="" style="position: absolute; right: -30px; bottom: -40px; height: 220px; width: auto; opacity: 0.08;" />
+            <p style="margin: 0 0 18px; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #99A8B4; position: relative;">The network</p>
+            <div style="display: grid; gap: 12px; position: relative;">
+              <sc-for list="{{ networkFacts }}" as="f" hint-placeholder-count="3">
+                <div style="display: flex; gap: 14px; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.12);">
+                  <span style="font-size: 24px; font-weight: 300; color: #FFFFFF; min-width: 3.5em;">{{ f.value }}</span>
+                  <span style="font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.76);">{{ f.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="background: #0F283E; border-top: 1px solid rgba(255,255,255,0.1);">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 40px 24px; display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between;">
+      <img src="assets/gtm-logo-white.png" alt="Global Tech Mergers" style="height: 72px; width: auto; display: block;" />
+      <p style="margin: 0; max-width: 30em; font-size: 12px; line-height: 1.6; color: rgba(255,255,255,0.6);">ExitIQ is an orientation tool, not investment advice or a valuation. Answers are scored against the readiness criteria professional buyers apply in due diligence.</p>
+      <div style="display: flex; gap: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em;">
+        <a href="https://www.globaltechmergers.com/" style="color: rgba(255,255,255,0.72);">globaltechmergers.com</a>
+        <a href="#imprint" style="color: rgba(255,255,255,0.72);">Imprint</a>
+        <a href="#privacy" style="color: rgba(255,255,255,0.72);">Privacy</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#37627F&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#37627F&quot;, &quot;#0F283E&quot;, &quot;#999999&quot;, &quot;#2F7A4E&quot;], &quot;section&quot;: &quot;Brand&quot;}}">
+const PILLARS = [
+  { key: 'financial_transparency', label: 'Financial Transparency & Performance', short: 'Financials', wx: 0.18, wy: 0.30, desc: 'Clean, audited numbers; recurring revenue; private costs kept out of the P&L.' },
+  { key: 'owner_independence', label: 'Owner Independence', short: 'Ownership', wx: 0.28, wy: 0.02, desc: 'Management depth, documented know-how, a tested succession scenario.' },
+  { key: 'market_position', label: 'Market Position & Moat', short: 'Market', wx: 0.02, wy: 0.32, desc: 'Differentiation, market growth, a brand that stands without the founder.' },
+  { key: 'customer_supplier', label: 'Customer & Supplier Structure', short: 'Customers', wx: 0.12, wy: 0.16, desc: 'Concentration risk, contract quality, diversification across industries.' },
+  { key: 'processes_scalability', label: 'Processes, Scalability & Infrastructure', short: 'Processes', wx: 0.12, wy: 0.10, desc: 'Documented SOPs, a modern stack, headroom to grow without linear cost.' },
+  { key: 'people_culture', label: 'Personnel & Corporate Culture', short: 'People', wx: 0.08, wy: 0.08, desc: 'Retention, key-person risk, a working talent pipeline.' },
+  { key: 'legal_cleanliness', label: 'Legal & Compliance Cleanliness', short: 'Legal', wx: 0.20, wy: 0.02, desc: 'Clear ownership, company-held IP, current contracts, no open litigation.' },
+];
+
+const ZONES = [
+  { x: 0, y: 0, name: 'The Dead End', color: '#ef4444', rec: 'Currently not transaction-capable - focus on operational turnaround. Critical gaps across both exit readiness and value creation mean the business is not sellable in its current state.' },
+  { x: 1, y: 0, name: 'The Value Trap', color: '#f97316', rec: 'Strategic realignment and growth impulses needed before sale. The business has structural readiness but limited strategic attractiveness - without meaningful differentiation, any transaction will underperform on price.' },
+  { x: 2, y: 0, name: 'The Clean Workhorse', color: '#eab308', rec: 'Secure deal, low price - focus on margin improvement and scalability. The business is structurally ready and will transact, but limited value creation potential constrains the multiple.' },
+  { x: 0, y: 1, name: 'The Hidden Potential', color: '#f97316', rec: 'Focus on reducing owner dependency and documenting IP. Real value exists here but is masked by structural risks. Buyers will discount heavily for owner dependency and undocumented processes.' },
+  { x: 1, y: 1, name: 'The Average Performer', color: '#eab308', rec: 'Solid company - create a 12-month plan for value enhancement. Moderate performance on both dimensions; significant improvement is achievable with focused effort on your lowest-scoring pillars.' },
+  { x: 2, y: 1, name: 'The Safe Bet', color: '#84cc16', rec: 'High security - optimise your equity story for multiple expansion. Structural prerequisites are excellent; targeted improvements in market positioning and growth metrics can shift you to Crown Jewel territory.' },
+  { x: 0, y: 2, name: 'The Broken Diamond', color: '#f97316', rec: 'High-value, but red flags - address corporate hygiene first, then sale. Outstanding strategic value is trapped by critical structural deficiencies that buyers will price heavily for risk.' },
+  { x: 1, y: 2, name: 'The Polished Gem', color: '#84cc16', rec: 'High value - eliminate remaining risks before market launch. A compelling value proposition exists, but structural gaps will suppress your exit price.' },
+  { x: 2, y: 2, name: 'The Crown Jewel', color: '#22c55e', rec: 'High exit readiness - the process can be prepared. Your company combines high exit readiness with strong strategic attractiveness and is typically well placed to achieve an attractive valuation.' },
+];
+
+const SECTORS = [
+  { key: 'it_services', label: 'IT Services & Consulting', desc: 'IT consulting, managed services, system integration' },
+  { key: 'saas', label: 'SaaS / Software Products', desc: 'Cloud software, recurring revenue, product-led growth' },
+  { key: 'hr_tech', label: 'HR Tech & Workforce', desc: 'HR platforms, workforce management, talent tech' },
+  { key: 'cybersecurity', label: 'Cybersecurity', desc: 'Managed security services, security software, SOC and MDR, security consulting' },
+];
+
+const QUESTIONS = [
+  { id: 'ft-1', p: 'financial_transparency', q: 'Does monthly controlling exist with target/actual comparisons and integrated 3–5 year planning?', opts: ['Fully integrated reporting system; monthly steering meetings; rolling 5-year planning established', 'Monthly reports available; annual planning exists; target/actual analyses occur irregularly', 'Ad-hoc reporting; focus on liquidity instead of P&L management; no reliable long-term planning'] },
+  { id: 'ft-2', p: 'financial_transparency', q: 'Are audited financial statements available for the last three years and is the accounting "due diligence-ready"?', info: 'Acquirers require independently verified financials. Unaudited numbers carry significant due-diligence risk and suppress valuations.', opts: ['Complete audited financial statements for last 3 years; "Financial Factbook" prepared', 'Tax advisor statements available; documentation largely prepared for due diligence', 'Financial statements incomplete or delayed; documentation does not meet professional investor standards'] },
+  { id: 'ft-4', p: 'financial_transparency', q: 'What percentage of revenue is contractually secured and recurring?', opts: ['Over 70% of revenue based on subscriptions, maintenance contracts, or long-term framework agreements (>2 years)', 'Mix of long-term contracts and stable existing customers; current trading within budget range', 'Focus on short-term project business; no contractual customer commitment; high dependency on new customers'] },
+  { id: 'oi-1', p: 'owner_independence', q: 'Can the company operate profitably for three months without any owner decisions?', info: 'Owner dependency is the single biggest discount applied by acquirers. A business that cannot run without its founder is often unsellable at fair value.', opts: ['Owner no longer in daily operations; management makes operational decisions autonomously', 'Owner needed for strategic topics and key accounts; core processes run stably without them', 'Owner is "bottleneck" for all important approvals and operational processes'] },
+  { id: 'oi-2', p: 'owner_independence', q: 'Is business-critical know-how (technical/sales) documented in systems?', opts: ['Full documentation of all IP and process knowledge in digital manuals/systems (SOPs)', 'Core knowledge partially documented; knowledge transfer to second level initiated', 'Exclusive knowledge almost only with owner; no written knowledge base available'] },
+  { id: 'oi-3', p: 'owner_independence', q: 'Does a second management level exist with authority and clear reporting structures?', opts: ['Experienced management team with power of attorney; clear responsibilities and reporting structures established', 'Management team present but still heavily dependent on owner as corrective', 'Flat hierarchy without real delegation; owner decides even minor matters'] },
+  { id: 'mp-1', p: 'market_position', q: 'Does the company have a unique selling proposition that protects it from price competition?', opts: ['Unique technology or market position; high switching barriers for customers (lock-in)', 'Clear competitive advantage present; market positioning allows above-average prices', 'Interchangeable service offering; competition primarily through price'] },
+  { id: 'mp-2', p: 'market_position', q: 'Does the company operate in a growing market segment with a positive future outlook?', opts: ['Dynamic growth market; company occupies attractive niches with high margins', 'Stable overall market; company can gain market share through targeted acquisition/marketing', 'Saturated or shrinking market; high consolidation pressure from competitors'] },
+  { id: 'mp-3', p: 'market_position', q: 'Is the brand established in the market independently of the owner\u2019s name or reputation?', opts: ['Brand stands on its own; high recognition; branding is person-independent', 'Brand well established; connection to owner being gradually reduced', 'Brand reputation inseparably linked to the entrepreneur\u2019s person'] },
+  { id: 'cs-1', p: 'customer_supplier', q: 'Does the largest single customer generate less than 10–15% of total revenue?', info: 'High customer concentration is a key deal-breaker. Acquirers typically want no single customer exceeding 20–25% of revenue.', opts: ['Highly diversified portfolio; no customer contributes significantly to risk', 'Focus on top customers present, but no cluster risk over 20% per customer', 'Extreme dependency; a single customer generates >25% of revenue'] },
+  { id: 'cs-3', p: 'customer_supplier', q: 'Are the top 10 customer relationships secured by long-term contracts?', opts: ['Long-term framework contracts with termination protection and price adjustment clauses', 'Verbal commitments backed by written standard contracts; change-of-control reviewed', 'Primarily spot business or outdated contracts without legal security in a sale'] },
+  { id: 'cs-4', p: 'customer_supplier', q: 'Is the business model diversified against crises in a single industry?', opts: ['Diversified customer base across different industries and regions', 'Focus in one industry, but initial success in opening new markets', '100% focus on one volatile industry; no compensation possible'] },
+  { id: 'ps-1', p: 'processes_scalability', q: 'Are written Standard Operating Procedures (SOPs) available for all core processes?', opts: ['Complete documentation in a process manual; all procedures are replicable', 'Core processes documented; organisation with clear responsibilities implemented', 'Knowledge about processes is purely implicit; "wild growth" in task handling'] },
+  { id: 'ps-2', p: 'processes_scalability', q: 'Is the technology stack modern, secure, and without significant legacy issues?', opts: ['Modern cloud-based systems; IT security standards met; no investment backlog', 'Stable IT landscape; digitalization concept being successively implemented', 'Outdated systems; manual interfaces; high failure or security risk'] },
+  { id: 'ps-3', p: 'processes_scalability', q: 'Can revenue be increased by 30% without having to increase fixed costs linearly?', opts: ['High economies of scale; infrastructure and capacities offer reserves for strong growth', 'Scalability in core area given; additional personnel for growth plannable', 'Capacity limit reached; any growth requires massive capex investments'] },
+  { id: 'pc-1', p: 'people_culture', q: 'Is the turnover of key performers below industry average?', opts: ['Very low turnover; employee participation program or incentives established', 'Stable workforce; work-life balance conditions are competitive', 'High turnover; no employee retention measures; poor workplace climate'] },
+  { id: 'pc-2', p: 'people_culture', q: 'Are technical experts replaceable, or does success depend on a few "heroes"?', info: 'Key-man risk is a primary discount applied in due diligence. Buyers want to know the business survives the departure of any single individual.', opts: ['Knowledge is broadly distributed; deputy concept exists for every key position', 'Key employees identified; retention measures and knowledge documentation started', 'Company success massively depends on 1–2 critical experts'] },
+  { id: 'pc-3', p: 'people_culture', q: 'Does the company have an efficient process for talent acquisition?', opts: ['Professional employer branding; structured onboarding processes; talent pipeline established', 'Recruiting functions well reactively; website and external appearance are high-quality', 'No strategy against skilled labor shortage; open positions remain unfilled for months'] },
+  { id: 'lc-1', p: 'legal_cleanliness', q: 'Are ownership ratios and transfer chains absolutely clear?', info: 'Complex or unclear ownership structures are a common deal-breaker. Acquirers need a clean, unambiguous shareholder register.', opts: ['Clear shareholder structure; drag-along rights in contract; transaction capability secured', 'Transfer chain documentation complete; coordination among shareholders done', 'Complex or unclear ownership; risk of blockades by minorities'] },
+  { id: 'lc-2', p: 'legal_cleanliness', q: 'Do trademarks, patents, domains, and software code legally belong to the company?', opts: ['All IP rights globally secured and owned by company; no IP held by owner personally', 'Trademark and title protection registered; intellectual property inventory completed', 'IP rights unclear or partially in private ownership; no protection rights registered'] },
+  { id: 'lc-4', p: 'legal_cleanliness', q: 'Are data protection (GDPR), taxes, and regulations fully complied with?', opts: ['Data protection officer appointed; compliance system audited; no tax risks', 'GDPR implemented; social security audit completed; tax structure reviewed', 'Significant data protection gaps; unclear tax risks; no compliance control'] },
+];
+
+const GAP_NOTES = {
+  financial_transparency: 'Expect a quality-of-earnings review to open here. Audited statements and a clean recurring-revenue split are the cheapest fixes available.',
+  owner_independence: 'The largest single discount in mid-cap deals. A second management level with real authority moves this fastest.',
+  market_position: 'Without a defensible position the multiple compresses regardless of readiness. Sharpen the differentiation story and the roadmap.',
+  customer_supplier: 'Concentration is priced as risk. Quantify the exposure and show an active diversification programme.',
+  processes_scalability: 'Undocumented processes read as owner dependency by another name. Start with SOPs for the core value chain.',
+  people_culture: 'Key-person risk gets tested in every management session. Deputy concepts and retention terms answer it.',
+  legal_cleanliness: 'Legal hygiene rarely raises the price but frequently stops the deal. Clear the register, the IP and the contracts early.',
+};
+
+class Component extends DCLogic {
+  state = {
+    screen: 'landing',
+    sector: null,
+    qi: 0,
+    answers: {},
+    introSent: false,
+    form: { company: '', contact: '', email: '', revenue: '€5M–€10M', country: 'Germany' },
+  };
+
+  set(patch) { this.setState(patch); }
+  setForm(k, v) { this.setState((s) => ({ form: { ...s.form, [k]: v } })); }
+
+  scores() {
+    const per = {};
+    PILLARS.forEach((p) => {
+      const qs = QUESTIONS.filter((q) => q.p === p.key);
+      const answered = qs.filter((q) => this.state.answers[q.id] !== undefined);
+      const raw = answered.reduce((sum, q) => sum + this.state.answers[q.id], 0);
+      per[p.key] = answered.length ? Math.round((raw / (answered.length * 2)) * 100) : 0;
+    });
+    let xw = 0, xs = 0, yw = 0, ys = 0;
+    PILLARS.forEach((p) => {
+      xw += p.wx; xs += p.wx * per[p.key];
+      yw += p.wy; ys += p.wy * per[p.key];
+    });
+    return { per, x: Math.round(xs / xw), y: Math.round(ys / yw) };
+  }
+
+  band(v) { return v < 40 ? 0 : v < 70 ? 1 : 2; }
+
+  renderVals() {
+    const st = this.state;
+    const accent = this.props.accent ?? '#37627F';
+    const total = QUESTIONS.length;
+    const q = QUESTIONS[st.qi];
+    const answered = st.answers[q.id];
+    const sectorObj = SECTORS.find((s) => s.key === st.sector);
+    const sc = this.scores();
+    const zone = ZONES.find((z) => z.x === this.band(sc.x) && z.y === this.band(sc.y)) || ZONES[4];
+
+    const stepLabels = { landing: 'Exit readiness calculator', sector: 'Step 1 of 4 · Sector', form: 'Step 2 of 4 · Company', assess: 'Step 3 of 4 · Assessment', result: 'Step 4 of 4 · Result' };
+
+    const cellsFor = (activeZone) => {
+      const out = [];
+      [2, 1, 0].forEach((y) => {
+        [0, 1, 2].forEach((x) => {
+          const z = ZONES.find((zz) => zz.x === x && zz.y === y);
+          const active = activeZone && activeZone.x === x && activeZone.y === y;
+          out.push({
+            name: z.name.replace('The ', ''),
+            color: active ? z.color : '#8896A3',
+            border: active ? z.color : '#E3E7EB',
+            bg: active ? z.color + '14' : '#FAFBFC',
+          });
+        });
+      });
+      return out;
+    };
+
+    const previewCells = [];
+    [2, 1, 0].forEach((y) => {
+      [0, 1, 2].forEach((x) => {
+        const z = ZONES.find((zz) => zz.x === x && zz.y === y);
+        previewCells.push({ name: z.name.replace('The ', ''), color: x === 2 && y === 2 ? z.color : 'rgba(255,255,255,0.5)' });
+      });
+    });
+
+    const pillarScores = PILLARS.map((p) => {
+      const v = sc.per[p.key];
+      return {
+        label: p.label,
+        value: String(v),
+        width: v + '%',
+        color: v >= 70 ? '#2F7A4E' : v >= 45 ? '#0F283E' : '#B3543A',
+      };
+    });
+
+    const gaps = PILLARS.slice()
+      .sort((a, b) => sc.per[a.key] - sc.per[b.key])
+      .slice(0, 3)
+      .map((p, i) => ({ num: '0' + (i + 1), label: p.label + ' · ' + sc.per[p.key] + '/100', note: GAP_NOTES[p.key] }));
+
+    return {
+      accent,
+      isLanding: st.screen === 'landing',
+      isSector: st.screen === 'sector',
+      isForm: st.screen === 'form',
+      isAssess: st.screen === 'assess',
+      isResult: st.screen === 'result',
+      showRestart: st.screen !== 'landing',
+      stepLabel: stepLabels[st.screen],
+      goLanding: () => this.set({ screen: 'landing' }),
+      goSector: () => this.set({ screen: 'sector' }),
+      restart: () => this.setState({ screen: 'landing', sector: null, qi: 0, answers: {}, introSent: false }),
+      startAssessment: () => this.set({ screen: 'assess', qi: 0 }),
+
+      previewCells,
+      pillarCards: PILLARS.map((p, i) => ({ num: '0' + (i + 1), label: p.label, desc: p.desc })),
+      sectors: SECTORS.map((s, i) => ({
+        num: '0' + (i + 1), label: s.label, desc: s.desc,
+        pick: () => this.set({ sector: s.key, screen: 'form' }),
+      })),
+      sectorLabel: sectorObj ? sectorObj.label : 'Not selected',
+
+      form: st.form,
+      revenueBands: ['No external revenue yet', 'Under €1M', '€1M–€5M', '€5M–€10M', '€10M–€25M', '€25M–€50M', 'Over €50M'],
+      countries: ['Germany', 'Austria', 'Switzerland', 'Netherlands', 'Sweden', 'Hungary', 'Poland', 'Italy', 'Spain', 'United Kingdom', 'Other'],
+      setCompany: (e) => this.setForm('company', e.target.value),
+      setContact: (e) => this.setForm('contact', e.target.value),
+      setEmail: (e) => this.setForm('email', e.target.value),
+      setRevenue: (e) => this.setForm('revenue', e.target.value),
+      setCountry: (e) => this.setForm('country', e.target.value),
+
+      qNumber: String(st.qi + 1),
+      qTotal: String(total),
+      progressLabel: Math.round(((st.qi + 1) / total) * 100) + '% complete',
+      progressWidth: Math.round(((st.qi + 1) / total) * 100) + '%',
+      pillarChips: PILLARS.map((p) => {
+        const isCurrent = p.key === q.p;
+        const done = QUESTIONS.filter((x) => x.p === p.key).every((x) => st.answers[x.id] !== undefined);
+        return {
+          label: p.short,
+          bg: isCurrent ? '#0F283E' : done ? '#EDF0F3' : '#FFFFFF',
+          border: isCurrent ? '#0F283E' : '#E3E7EB',
+          color: isCurrent ? '#FFFFFF' : done ? '#0F283E' : '#999999',
+        };
+      }),
+      question: {
+        pillarLabel: PILLARS.find((p) => p.key === q.p).label,
+        q: q.q,
+        info: q.info || false,
+        opts: q.opts.map((label, idx) => {
+          const score = 2 - idx;
+          const sel = answered === score;
+          return {
+            label,
+            bg: sel ? '#F1F5F8' : '#FFFFFF',
+            border: sel ? '#0F283E' : '#E3E7EB',
+            dot: sel ? '#0F283E' : 'transparent',
+            dotBorder: sel ? '#0F283E' : '#CBD3DA',
+            pick: () => this.setState((s) => ({ answers: { ...s.answers, [q.id]: score } })),
+          };
+        }),
+      },
+      prevQuestion: () => (st.qi === 0 ? this.set({ screen: 'form' }) : this.set({ qi: st.qi - 1 })),
+      nextQuestion: () => {
+        if (st.answers[q.id] === undefined) return;
+        if (st.qi + 1 >= total) this.set({ screen: 'result' });
+        else this.set({ qi: st.qi + 1 });
+      },
+      nextLabel: st.qi + 1 >= total ? 'See my result' : 'Next question →',
+      nextBg: answered === undefined ? '#EDF0F3' : '#0F283E',
+      nextBorder: answered === undefined ? '#E3E7EB' : '#0F283E',
+      nextColor: answered === undefined ? '#9AA6B1' : '#FFFFFF',
+      nextCursor: answered === undefined ? 'not-allowed' : 'pointer',
+
+      xScore: String(sc.x),
+      yScore: String(sc.y),
+      zoneName: zone.name,
+      zoneRec: zone.rec,
+      zoneColor: zone.color,
+      matrixCells: cellsFor(zone),
+      dotLeft: Math.min(97, Math.max(3, sc.x)) + '%',
+      dotBottom: Math.min(97, Math.max(3, sc.y)) + '%',
+      pillarScores,
+      gaps,
+      companyName: st.form.company || 'Your company',
+      resultMeta: (sectorObj ? sectorObj.label : 'Technology') + ' · ' + st.form.revenue + ' revenue · ' + st.form.country,
+      resultDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+      countryLabel: st.form.country,
+      contactEmail: st.form.email || 'your inbox',
+      introSent: st.introSent,
+      introLabel: st.introSent ? 'Request sent' : 'Request an introduction',
+      requestIntro: () => this.set({ introSent: true }),
+      networkFacts: [
+        { value: 'Europe', label: 'A network of independent tech-focused M&A boutiques, one per market' },
+        { value: 'Tech', label: 'Software, IT services, HR tech and cybersecurity as the standing focus' },
+        { value: 'Local', label: 'Your result is picked up by the member firm in your country and language' },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

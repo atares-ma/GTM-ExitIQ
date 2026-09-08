@@ -1,0 +1,14 @@
+# ExitIQ on Strato shared hosting.
+
+# The mail relay appends an audit trail to leads.log next to send-lead.php.
+# It contains personal data and must never be served publicly.
+<Files "leads.log">
+  Require all denied
+</Files>
+
+AddDefaultCharset utf-8
+
+# Force HTTPS (Strato issues the certificate via the package's SSL settings).
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
