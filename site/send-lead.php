@@ -123,9 +123,10 @@ if ($recipient === '' || !filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
 }
 
 $company = $rows['Company'] !== '' ? $rows['Company'] : 'new lead';
-// The client sends a ready-made subject/body for introduction requests.
+// The client sends a ready-made subject/body (and optional HTML) for introductions.
 $clientSubject = field($data, 'subject', 200);
 $clientBody    = isset($data['message']) ? (string) $data['message'] : '';
+$clientHtml    = isset($data['messageHtml']) ? (string) $data['messageHtml'] : '';
 $subject = $clientSubject !== '' ? $clientSubject : sprintf('New ExitIQ lead - %s (%s)', $company, $name);
 if (trim($clientBody) !== '') {
     $body = str_replace(["\0"], '', mb_substr($clientBody, 0, 8000));
@@ -138,6 +139,23 @@ $headers = [
     'Content-Type' => 'text/plain; charset=UTF-8',
     'X-Mailer'     => 'ExitIQ',
 ];
+
+// When a branded HTML body is supplied, send multipart/alternative (text + HTML).
+if (trim($clientHtml) !== '') {
+    $html = str_replace(["\0"], '', mb_substr($clientHtml, 0, 100000));
+    $boundary = 'exitiq_' . bin2hex(random_bytes(10));
+    $headers['Content-Type'] = 'multipart/alternative; boundary="' . $boundary . '"';
+    $body = "--$boundary\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\n"
+        . "Content-Transfer-Encoding: 8bit\r\n\r\n"
+        . $body . "\r\n\r\n"
+        . "--$boundary\r\n"
+        . "Content-Type: text/html; charset=UTF-8\r\n"
+        . "Content-Transfer-Encoding: 8bit\r\n\r\n"
+        . $html . "\r\n\r\n"
+        . "--$boundary--";
+}
+
 $headerLines = [];
 foreach ($headers as $k => $v) {
     $headerLines[] = $k . ': ' . $v;

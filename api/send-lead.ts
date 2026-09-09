@@ -68,6 +68,8 @@ export interface LeadPayload {
   /** Ready-made subject/body built by the client for introduction requests. */
   subject?: string;
   message?: string;
+  /** Optional branded HTML body for introduction requests; text stays the fallback. */
+  messageHtml?: string;
 }
 
 /** Single-line, header-injection-safe value. */
@@ -128,6 +130,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // Introduction requests arrive with a partner-specific subject and body.
   const text = typeof body.message === 'string' && body.message.trim() ? body.message.slice(0, 8000) : defaultText;
+  const html = typeof body.messageHtml === 'string' && body.messageHtml.trim() ? body.messageHtml.slice(0, 100000) : undefined;
   const subject = clean(body.subject) || `New ExitIQ lead - ${clean(body.company) || 'unnamed company'} (${name})`;
 
   const transporter = nodemailer.createTransport({
@@ -144,6 +147,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       replyTo: `${name} <${email}>`,
       subject,
       text,
+      ...(html ? { html } : {}),
     });
     return res.status(200).json({ ok: true });
   } catch (err) {

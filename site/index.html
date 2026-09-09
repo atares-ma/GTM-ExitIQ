@@ -1542,13 +1542,17 @@ class Component extends DCLogic {
       ? 'ExitIQ - Vorstellungsanfrage: ' + company + ' (' + ctx.country + ')'
       : 'ExitIQ - introduction request: ' + company + ' (' + ctx.country + ')';
 
+    const greeting = de
+      ? 'Hallo ' + (isAny ? 'Global Tech Mergers Team' : partnerName + '-Team') + ','
+      : 'Hello ' + (isAny ? 'Global Tech Mergers team' : partnerName + ' team') + ',';
+
     const opening = isAny
       ? (de
-        ? 'über ExitIQ ist eine Vorstellungsanfrage ohne Partnerpräferenz eingegangen. Bitte ordnen Sie die passende Mitgliedsfirma zu.'
-        : 'an introduction request has come in through ExitIQ with no partner preference. Please assign the appropriate member firm.')
+        ? 'über ExitIQ, die Exit-Readiness-Selbsteinschätzung von Global Tech Mergers, ist eine Vorstellungsanfrage ohne Partnerpräferenz eingegangen. ' + company + ' hat die Selbsteinschätzung abgeschlossen - bitte ordnen Sie die passende Mitgliedsfirma zu.'
+        : 'a new introduction request has come in through ExitIQ, the exit-readiness self-assessment run by Global Tech Mergers, with no partner preference. ' + company + ' completed the assessment - please assign the appropriate member firm.')
       : (de
-        ? 'über ExitIQ hat ein Unternehmen ausdrücklich ' + partnerName + ' als Gesprächspartner ausgewählt.'
-        : 'a company has completed the ExitIQ self-assessment and specifically asked for ' + partnerName + ' as their counterpart.');
+        ? 'über ExitIQ, die Exit-Readiness-Selbsteinschätzung von Global Tech Mergers, ist eine neue Vorstellungsanfrage eingegangen. ' + company + ' hat die Selbsteinschätzung abgeschlossen und ausdrücklich um eine Vorstellung bei ' + partnerName + ' gebeten.'
+        : company + ' has completed the ExitIQ self-assessment, the exit-readiness self-assessment run by Global Tech Mergers, and specifically asked to be introduced to ' + partnerName + '.');
 
     const pad = (s) => (s + ':').padEnd(26, ' ');
     const rows = [
@@ -1565,7 +1569,7 @@ class Component extends DCLogic {
     ];
 
     const body = [
-      de ? 'Hallo ' + (isAny ? 'Global Tech Mergers Team' : partnerName + '-Team') + ',' : 'Hello ' + (isAny ? 'Global Tech Mergers team' : partnerName + ' team') + ',',
+      greeting,
       '',
       opening,
       '',
@@ -1583,7 +1587,111 @@ class Component extends DCLogic {
       de ? 'Automatisch gesendet von ExitIQ.' : 'Sent automatically by ExitIQ.',
     ].join('\n');
 
-    return { to, partnerName, subject, body };
+    const bodyHtml = this.introHtml({ de, isAny, company, partnerName, sector, zoneName, ctx, p });
+
+    return { to, partnerName, subject, body, bodyHtml };
+  }
+
+  /** Branded HTML version of the introduction email (ExitIQ navy/cyan). */
+  introHtml(o) {
+    const { de, isAny, company, partnerName, sector, zoneName, ctx, p } = o;
+    const esc = (s) => String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const NAVY = '#0F283E', CYAN = '#01F0FC', GREY = '#7A8894', LINE = '#E9EEF3', TINT = '#F0F5F9';
+    const zc = (ctx.zone && ctx.zone.color) || CYAN;
+
+    const greeting = de
+      ? 'Hallo ' + (isAny ? 'Global Tech Mergers Team' : partnerName + '-Team') + ','
+      : 'Hello ' + (isAny ? 'Global Tech Mergers team' : partnerName + ' team') + ',';
+    const intro1 = isAny
+      ? (de
+        ? 'Über ExitIQ, die Exit-Readiness-Selbsteinschätzung von Global Tech Mergers, ist eine Vorstellungsanfrage ohne Partnerpräferenz eingegangen. <strong>' + esc(company) + '</strong> hat die Selbsteinschätzung abgeschlossen - bitte ordnen Sie die passende Mitgliedsfirma zu.'
+        : 'A new introduction request has come in through ExitIQ, the exit-readiness self-assessment run by Global Tech Mergers, with no partner preference. <strong>' + esc(company) + '</strong> completed the assessment - please assign the appropriate member firm.')
+      : (de
+        ? 'Über ExitIQ, die Exit-Readiness-Selbsteinschätzung von Global Tech Mergers, ist eine neue Vorstellungsanfrage eingegangen. <strong>' + esc(company) + '</strong> hat die Selbsteinschätzung abgeschlossen und ausdrücklich um eine Vorstellung bei ' + esc(partnerName) + ' gebeten.'
+        : 'A new introduction request has come in through ExitIQ, the exit-readiness self-assessment run by Global Tech Mergers. <strong>' + esc(company) + '</strong> completed the assessment and specifically asked to be introduced to ' + esc(partnerName) + '.');
+    const intro2 = de
+      ? 'Nachfolgend die eigenen Angaben des Unternehmens und das selbst eingeschätzte Exit-Readiness-Ergebnis.'
+      : 'Below is the company profile they submitted, together with their self-assessed exit-readiness result.';
+    const closing = de
+      ? 'Das Unternehmen erwartet ein kurzes, unverbindliches Erstgespräch zum Ergebnis. Eine Antwort auf diese E-Mail erreicht den Kontakt direkt.'
+      : 'The company is expecting a brief, non-binding first conversation about the result. Replying to this email reaches the contact directly.';
+    const disclaimer = de
+      ? 'Hinweis: Die Angaben stammen aus einer strukturierten Selbsteinschätzung, sind nicht geprüft und stellen keine Unternehmensbewertung dar.'
+      : 'Note: the figures come from a structured self-assessment, are unverified, and do not constitute a company valuation.';
+    const sentBy = de ? 'Automatisch gesendet von ExitIQ &middot; Global Tech Mergers' : 'Sent automatically by ExitIQ &middot; Global Tech Mergers';
+
+    const companyRows = [
+      [de ? 'Unternehmen' : 'Company', company],
+      [de ? 'Kontakt' : 'Contact', ctx.name || '-'],
+      [de ? 'E-Mail' : 'Email', ctx.email || '-'],
+      [de ? 'Land' : 'Country', ctx.country],
+      [de ? 'Branche' : 'Sector', sector],
+      [de ? 'Umsatz' : 'Revenue', ctx.revenue],
+    ];
+    const rowsHtml = companyRows.map(([k, v], i) => {
+      const bb = i === companyRows.length - 1 ? 'none' : '1px solid ' + LINE;
+      return '<tr>'
+        + '<td style="padding:11px 16px;font-size:13px;color:' + GREY + ';width:42%;border-bottom:' + bb + ';">' + esc(k) + '</td>'
+        + '<td style="padding:11px 16px;font-size:13px;color:' + NAVY + ';font-weight:600;border-bottom:' + bb + ';">' + esc(v || '-') + '</td>'
+        + '</tr>';
+    }).join('');
+
+    const tile = (num, label) =>
+      '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:' + TINT + ';border-radius:10px;"><tr><td style="padding:16px 12px;text-align:center;">'
+      + '<div style="font-size:30px;font-weight:800;color:' + NAVY + ';line-height:1;">' + esc(num) + '<span style="font-size:14px;color:#9AA7B2;font-weight:700;">/100</span></div>'
+      + '<div style="margin-top:8px;font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:' + GREY + ';">' + esc(label) + '</div>'
+      + '</td></tr></table>';
+
+    const zoneBadge =
+      '<table role="presentation" cellpadding="0" cellspacing="0" style="background:' + TINT + ';border-radius:999px;"><tr><td style="padding:9px 16px;font-size:13px;color:' + NAVY + ';font-weight:700;">'
+      + '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + zc + ';"></span>&nbsp;&nbsp;'
+      + '<span style="font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:' + GREY + ';">' + (de ? 'Zone' : 'Zone') + '</span>&nbsp; ' + esc(zoneName)
+      + '</td></tr></table>';
+
+    const partnerLine = esc(partnerName) + ' (' + esc(ctx.pick(p.location)) + ')';
+
+    return ''
++ '<div style="margin:0;padding:0;background:#EEF2F5;">'
++ '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EEF2F5;padding:24px 0;"><tr><td align="center">'
++ '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border-radius:14px;overflow:hidden;font-family:\'Open Sans\',Arial,Helvetica,sans-serif;">'
++ '<tr><td style="background:' + NAVY + ';padding:26px 32px;">'
++ '<div style="font-size:22px;font-weight:800;color:#FFFFFF;letter-spacing:0.5px;">Exit<span style="color:' + CYAN + ';">IQ</span></div>'
++ '<div style="height:3px;width:44px;background:' + CYAN + ';margin:10px 0 8px;border-radius:2px;font-size:0;line-height:0;">&nbsp;</div>'
++ '<div style="font-size:11px;color:rgba(255,255,255,0.72);letter-spacing:1.4px;text-transform:uppercase;">Global Tech Mergers</div>'
++ '</td></tr>'
++ '<tr><td style="padding:28px 32px 6px;">'
++ '<p style="margin:0 0 14px;font-size:15px;color:' + NAVY + ';font-weight:700;">' + esc(greeting) + '</p>'
++ '<p style="margin:0 0 12px;font-size:14px;line-height:1.65;color:#41505C;">' + intro1 + '</p>'
++ '<p style="margin:0;font-size:14px;line-height:1.65;color:#41505C;">' + intro2 + '</p>'
++ '</td></tr>'
++ '<tr><td style="padding:20px 32px 0;">'
++ '<div style="font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#99A6B1;margin-bottom:9px;">' + (de ? 'Unternehmen' : 'Company') + '</div>'
++ '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ' + LINE + ';border-radius:10px;border-collapse:separate;">' + rowsHtml + '</table>'
++ '</td></tr>'
++ '<tr><td style="padding:22px 32px 0;">'
++ '<div style="font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#99A6B1;margin-bottom:10px;">' + (de ? 'Ergebnis der Selbsteinschätzung' : 'Self-assessment result') + '</div>'
++ '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
++ '<td width="50%" style="padding-right:6px;vertical-align:top;">' + tile(ctx.sc.x, de ? 'Exit-Bereitschaft' : 'Exit readiness') + '</td>'
++ '<td width="50%" style="padding-left:6px;vertical-align:top;">' + tile(ctx.sc.y, de ? 'Wertschöpfung' : 'Value creation') + '</td>'
++ '</tr></table>'
++ '<div style="margin-top:12px;">' + zoneBadge + '</div>'
++ '</td></tr>'
++ '<tr><td style="padding:18px 32px 0;">'
++ '<div style="font-size:13px;color:#41505C;">' + (de ? 'Gewünschter Partner' : 'Requested partner') + ': <strong style="color:' + NAVY + ';">' + partnerLine + '</strong></div>'
++ '</td></tr>'
++ '<tr><td style="padding:20px 32px 4px;">'
++ '<p style="margin:0;font-size:14px;line-height:1.65;color:#41505C;">' + closing + '</p>'
++ '</td></tr>'
++ '<tr><td style="padding:20px 32px 28px;">'
++ '<div style="border-top:1px solid ' + LINE + ';padding-top:16px;">'
++ '<p style="margin:0 0 8px;font-size:12px;line-height:1.5;color:#8A97A3;">' + disclaimer + '</p>'
++ '<p style="margin:0;font-size:12px;color:#8A97A3;">' + sentBy + '</p>'
++ '</div>'
++ '</td></tr>'
++ '</table>'
++ '</td></tr></table>'
++ '</div>';
   }
 
   submitLead(payload, recipient) {
@@ -2336,6 +2444,7 @@ class Component extends DCLogic {
           recipient: mail.to,
           subject: mail.subject,
           message: mail.body,
+          messageHtml: mail.bodyHtml,
           name: st.summaryName || st.contact,
           email: st.summaryEmail || st.email,
           company: st.company,
