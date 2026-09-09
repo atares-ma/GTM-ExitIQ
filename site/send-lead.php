@@ -99,13 +99,19 @@ $rows = [
     'Submitted'               => field($data, 'submittedAt', 40),
 ];
 
-$lines = ['A new ExitIQ self-assessment has been completed.', ''];
-foreach ($rows as $label => $value) {
-    $lines[] = str_pad($label . ':', 26) . ($value === '' || $value === '/100' ? '-' : $value);
+// The emailed notification lists only who completed the assessment - not the
+// scored result (that stays on the respondent's screen). $rows keeps the full
+// set, including scores, for the local audit log below.
+$notifyLabels = ['Name', 'Email', 'Company', 'Sector', 'Country', 'Revenue', 'Submitted'];
+$lines = ['New ExitIQ lead: someone completed the self-assessment and left their contact details.', ''];
+foreach ($notifyLabels as $label) {
+    $value = $rows[$label] ?? '';
+    $lines[] = str_pad($label . ':', 26) . ($value === '' ? '-' : $value);
 }
 $lines[] = '';
 $lines[] = 'Source IP: ' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
-$lines[] = 'Sent automatically by the ExitIQ tool. Reply directly to contact the respondent.';
+$lines[] = 'This is a notification only. The assessment result was shown to the respondent';
+$lines[] = 'on screen and is not included here. Reply directly to this email to reach them.';
 $body = implode("\n", $lines);
 
 $partnerKey = field($data, 'partnerKey', 40);
@@ -118,7 +124,7 @@ $company = $rows['Company'] !== '' ? $rows['Company'] : 'new lead';
 // The client sends a ready-made subject/body for introduction requests.
 $clientSubject = field($data, 'subject', 200);
 $clientBody    = isset($data['message']) ? (string) $data['message'] : '';
-$subject = $clientSubject !== '' ? $clientSubject : sprintf('ExitIQ assessment - %s (%s)', $company, $name);
+$subject = $clientSubject !== '' ? $clientSubject : sprintf('New ExitIQ lead - %s (%s)', $company, $name);
 if (trim($clientBody) !== '') {
     $body = str_replace(["\0"], '', mb_substr($clientBody, 0, 8000));
 }

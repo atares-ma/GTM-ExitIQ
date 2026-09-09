@@ -88,6 +88,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(422).json({ error: 'name and a valid email are required' });
   }
 
+  // Lead-notification fields only: who completed the assessment, not the result.
+  // The scored result stays on the respondent's screen and in the Supabase leads
+  // table; it is deliberately NOT included in this email.
   const rows: Array<[string, string]> = [
     ['Name', name],
     ['Email', email],
@@ -95,9 +98,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ['Sector', clean(body.sector)],
     ['Country', clean(body.country)],
     ['Revenue', clean(body.revenue)],
-    ['Exit readiness', body.exitReadiness != null ? `${body.exitReadiness}/100` : ''],
-    ['Value creation potential', body.valuePotential != null ? `${body.valuePotential}/100` : ''],
-    ['Zone', clean(body.zone)],
     ['Submitted', clean(body.submittedAt, 40)],
   ];
 
@@ -106,16 +106,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const recipient = routed && isEmail(routed) ? routed : FALLBACK_RECIPIENT;
 
   const defaultText = [
-    'A new ExitIQ self-assessment has been completed.',
+    'New ExitIQ lead: someone completed the self-assessment and left their contact details.',
     '',
     ...rows.map(([k, v]) => `${(k + ':').padEnd(26)}${v || '-'}`),
     '',
-    'Sent automatically by the ExitIQ tool. Reply directly to contact the respondent.',
+    'This is a notification only. The assessment result was shown to the respondent',
+    'on screen and is not included here. Reply directly to this email to reach them.',
   ].join('\n');
 
   // Introduction requests arrive with a partner-specific subject and body.
   const text = typeof body.message === 'string' && body.message.trim() ? body.message.slice(0, 8000) : defaultText;
-  const subject = clean(body.subject) || `ExitIQ assessment - ${clean(body.company) || 'new lead'} (${name})`;
+  const subject = clean(body.subject) || `New ExitIQ lead - ${clean(body.company) || 'unnamed company'} (${name})`;
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST ?? 'smtp.strato.de',
