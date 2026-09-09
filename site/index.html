@@ -1694,6 +1694,118 @@ class Component extends DCLogic {
 + '</div>';
   }
 
+  htmlEsc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /** Shared ExitIQ email wrapper (navy header + white card). `inner` is table rows. */
+  emailShell(inner) {
+    const NAVY = '#0F283E', CYAN = '#01F0FC';
+    return ''
++ '<div style="margin:0;padding:0;background:#EEF2F5;">'
++ '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EEF2F5;padding:24px 0;"><tr><td align="center">'
++ '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border-radius:14px;overflow:hidden;font-family:\'Open Sans\',Arial,Helvetica,sans-serif;">'
++ '<tr><td style="background:' + NAVY + ';padding:26px 32px;">'
++ '<div style="font-size:22px;font-weight:800;color:#FFFFFF;letter-spacing:0.5px;">Exit<span style="color:' + CYAN + ';">IQ</span></div>'
++ '<div style="height:3px;width:44px;background:' + CYAN + ';margin:10px 0 8px;border-radius:2px;font-size:0;line-height:0;">&nbsp;</div>'
++ '<div style="font-size:11px;color:rgba(255,255,255,0.72);letter-spacing:1.4px;text-transform:uppercase;">Global Tech Mergers</div>'
++ '</td></tr>'
++ inner
++ '</table></td></tr></table></div>';
+  }
+
+  /** A titled label/value table block (rows = [[label, value], ...]). */
+  emailSection(title, rows) {
+    const NAVY = '#0F283E', GREY = '#7A8894', LINE = '#E9EEF3';
+    const esc = (s) => this.htmlEsc(s);
+    const rowsHtml = rows.map(([k, v], i) => {
+      const bb = i === rows.length - 1 ? 'none' : '1px solid ' + LINE;
+      return '<tr>'
+        + '<td style="padding:11px 16px;font-size:13px;color:' + GREY + ';width:42%;border-bottom:' + bb + ';">' + esc(k) + '</td>'
+        + '<td style="padding:11px 16px;font-size:13px;color:' + NAVY + ';font-weight:600;border-bottom:' + bb + ';">' + esc(v || '-') + '</td>'
+        + '</tr>';
+    }).join('');
+    return '<tr><td style="padding:20px 32px 0;">'
+      + '<div style="font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#99A6B1;margin-bottom:9px;">' + esc(title) + '</div>'
+      + '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ' + LINE + ';border-radius:10px;border-collapse:separate;">' + rowsHtml + '</table>'
+      + '</td></tr>';
+  }
+
+  /**
+   * The lead notification sent to GTM central when a respondent generates their
+   * summary. It announces the lead and their contact details - deliberately not
+   * the scored result, which stays on the respondent's screen. Returns text + HTML.
+   */
+  summaryEmail(o) {
+    const { de, name, email, company, sector, country, revenue, submittedAt } = o;
+    const NAVY = '#0F283E', LINE = '#E9EEF3';
+    const esc = (s) => this.htmlEsc(s);
+    const d = new Date(submittedAt);
+    const submitted = isNaN(d.getTime()) ? String(submittedAt || '') : d.toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+
+    const heading = de ? 'Neuer ExitIQ-Lead' : 'New ExitIQ lead';
+    const lead = de
+      ? 'Ein neuer Lead hat gerade die ExitIQ-Exit-Readiness-Selbsteinschätzung von Global Tech Mergers abgeschlossen und Kontaktdaten hinterlassen, damit Sie sich melden können.'
+      : 'Someone has just completed the ExitIQ exit-readiness self-assessment run by Global Tech Mergers and left their contact details so you can follow up.';
+    const closing = de
+      ? 'Antworten Sie auf diese E-Mail, um den Kontakt direkt zu erreichen. Das Ergebnis der Selbsteinschätzung wurde der Person am Bildschirm angezeigt und ist hier nicht enthalten.'
+      : 'Reply to this email to reach them directly. The self-assessment result was shown to the respondent on screen and is not included here.';
+    const sentBy = de ? 'Automatisch gesendet von ExitIQ &middot; Global Tech Mergers' : 'Sent automatically by ExitIQ &middot; Global Tech Mergers';
+
+    const contactRows = [
+      [de ? 'Kontakt' : 'Contact', name || '-'],
+      [de ? 'E-Mail' : 'Email', email || '-'],
+    ];
+    const companyRows = [
+      [de ? 'Unternehmen' : 'Company', company || '-'],
+      [de ? 'Branche' : 'Sector', sector || '-'],
+      [de ? 'Land' : 'Country', country || '-'],
+      [de ? 'Umsatz' : 'Revenue', revenue || '-'],
+      [de ? 'Eingereicht' : 'Submitted', submitted],
+    ];
+
+    const intro = '<tr><td style="padding:28px 32px 6px;">'
+      + '<p style="margin:0 0 12px;font-size:16px;color:' + NAVY + ';font-weight:800;">' + esc(heading) + '</p>'
+      + '<p style="margin:0;font-size:14px;line-height:1.65;color:#41505C;">' + esc(lead) + '</p>'
+      + '</td></tr>';
+    const closingB = '<tr><td style="padding:20px 32px 4px;">'
+      + '<p style="margin:0;font-size:14px;line-height:1.65;color:#41505C;">' + esc(closing) + '</p>'
+      + '</td></tr>';
+    const footer = '<tr><td style="padding:18px 32px 28px;">'
+      + '<div style="border-top:1px solid ' + LINE + ';padding-top:16px;">'
+      + '<p style="margin:0;font-size:12px;color:#8A97A3;">' + sentBy + '</p>'
+      + '</div></td></tr>';
+
+    const html = this.emailShell(
+      intro
+      + this.emailSection(de ? 'Kontakt' : 'Contact', contactRows)
+      + this.emailSection(de ? 'Unternehmen' : 'Company', companyRows)
+      + closingB + footer,
+    );
+
+    const pad = (s) => (s + ':').padEnd(20, ' ');
+    const text = [
+      heading,
+      '',
+      lead,
+      '',
+      pad(de ? 'Kontakt' : 'Contact') + (name || '-'),
+      pad(de ? 'E-Mail' : 'Email') + (email || '-'),
+      pad(de ? 'Unternehmen' : 'Company') + (company || '-'),
+      pad(de ? 'Branche' : 'Sector') + (sector || '-'),
+      pad(de ? 'Land' : 'Country') + (country || '-'),
+      pad(de ? 'Umsatz' : 'Revenue') + (revenue || '-'),
+      pad(de ? 'Eingereicht' : 'Submitted') + submitted,
+      '',
+      closing,
+      '',
+      de ? 'Automatisch gesendet von ExitIQ · Global Tech Mergers' : 'Sent automatically by ExitIQ · Global Tech Mergers',
+    ].join('\n');
+
+    return { text, html };
+  }
+
   submitLead(payload, recipient) {
     try {
       const prev = JSON.parse(window.localStorage.getItem(this.LEADS) || '[]');
@@ -2357,17 +2469,31 @@ class Component extends DCLogic {
       showSummary: () => {
         if (!st.summaryName.trim() || !st.summaryEmail.trim()) return;
         this.set({ summaryShown: true });
+        const submittedAt = new Date().toISOString();
+        const sectorLabel = sectorObj ? pick(sectorObj.label) : '';
+        const notify = this.summaryEmail({
+          de: g === 'de',
+          name: st.summaryName.trim(),
+          email: st.summaryEmail.trim(),
+          company: st.company,
+          sector: sectorLabel,
+          country: country,
+          revenue: revenue,
+          submittedAt: submittedAt,
+        });
         this.submitLead({
           name: st.summaryName.trim(),
           email: st.summaryEmail.trim(),
           company: st.company,
-          sector: sectorObj ? pick(sectorObj.label) : '',
+          sector: sectorLabel,
           country: country,
           revenue: revenue,
           exitReadiness: sc.x,
           valuePotential: sc.y,
           zone: pick(zone.name),
-          submittedAt: new Date().toISOString(),
+          submittedAt: submittedAt,
+          message: notify.text,
+          messageHtml: notify.html,
         });
       },
       leadStatus: st.leadStatus || '',
