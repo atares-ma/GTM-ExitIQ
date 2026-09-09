@@ -25,7 +25,9 @@ const PARTNER_RECIPIENTS = [
     'any'        => 'contact@globaltechmergers.com',
 ];
 // Must be a real mailbox on the sending domain, or Strato/SPF will reject it.
-const SENDER    = 'noreply@globaltechmergers.com';
+// Uses contact@ (which also receives the summary leads) so only one mailbox is
+// required on the domain.
+const SENDER    = 'contact@globaltechmergers.com';
 const SENDER_NAME = 'ExitIQ';
 
 // Restrict to the domain that serves the tool.

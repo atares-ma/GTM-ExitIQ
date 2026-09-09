@@ -28,7 +28,7 @@ environment variables are set (Project → Settings → Environment Variables):
 |---|---|
 | `SMTP_HOST` | `smtp.strato.de` |
 | `SMTP_PORT` | `465` |
-| `SMTP_USER` | `noreply@globaltechmergers.com` (a real Strato mailbox) |
+| `SMTP_USER` | `contact@globaltechmergers.com` (a real Strato mailbox; also the From address) |
 | `SMTP_PASS` | that mailbox's password |
 | `LEAD_RECIPIENT` | `contact@globaltechmergers.com` |
 | `LEAD_TO_ABSOLVO` … `LEAD_TO_WHITECROWN` | optional per-partner routing inboxes |

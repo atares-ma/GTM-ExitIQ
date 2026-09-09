@@ -13,12 +13,13 @@ for the package that hosts `globaltechmergers.com`:
    PHP 8 — just confirm the domain's package is a *hosting* package (not a
    pure domain/mail package). `send-lead.php` needs nothing beyond `mail()`.
 
-2. **Two mailboxes on the domain** (Email → create email address):
-   - `noreply@globaltechmergers.com` — the sending address. It must exist as a
-     real mailbox/address on the domain, otherwise Strato's MTA and SPF reject
-     the mails.
-   - `contact@globaltechmergers.com` — GTM central. Receives every summary
-     lead and any introduction request whose member firm has no address yet.
+2. **One mailbox on the domain** (Email → create email address):
+   - `contact@globaltechmergers.com` — used both as the **sending address**
+     (the `From`) and as GTM central that **receives** every summary
+     notification and any introduction whose member firm has no address yet.
+     It must exist as a real mailbox on the domain, otherwise Strato's MTA and
+     SPF reject the outgoing mail. (`noreply@` is intentionally not used — it
+     doesn't exist on the domain.)
 
 3. **The subdomain that will serve the tool**, e.g.
    `exitiq.globaltechmergers.com`:

@@ -10,7 +10,7 @@
  * Environment variables (Vercel → Settings → Environment Variables):
  *   SMTP_HOST=smtp.strato.de
  *   SMTP_PORT=465
- *   SMTP_USER=noreply@globaltechmergers.com     # a real Strato mailbox
+ *   SMTP_USER=contact@globaltechmergers.com     # a real Strato mailbox; also the From address
  *   SMTP_PASS=********                          # never in client code
  *   LEAD_RECIPIENT=contact@globaltechmergers.com
  */
@@ -21,15 +21,27 @@ import nodemailer from 'nodemailer';
 const FALLBACK_RECIPIENT = process.env.LEAD_RECIPIENT ?? 'contact@globaltechmergers.com';
 
 /**
- * Per-partner routing. Keys match the ExitIQ partner dropdown. Set one env var
- * per member firm; anything missing falls back to GTM central.
+ * Introduction requests go to the member firm the respondent picked in the
+ * dropdown. Add each firm's inbox here as they send you the address: put it
+ * between the quotes, commit (editing on github.com is fine), and Vercel
+ * redeploys. A matching Vercel environment variable (LEAD_TO_ABSOLVO,
+ * LEAD_TO_CERES, …) overrides the value here if you'd rather not touch code.
+ * Any firm left blank falls back to GTM central (contact@globaltechmergers.com).
  */
+const PARTNER_EMAILS: Record<string, string> = {
+  atares: 'exitiq@atares.team', // Germany
+  absolvo: '', // Hungary
+  ceres: '', // Sweden
+  venture: '', // United Kingdom
+  whitecrown: '', // France
+};
+
 const PARTNER_RECIPIENTS: Record<string, string | undefined> = {
-  absolvo: process.env.LEAD_TO_ABSOLVO, // Hungary
-  atares: process.env.LEAD_TO_ATARES ?? 'exitiq@atares.team', // Germany
-  ceres: process.env.LEAD_TO_CERES, // Sweden
-  venture: process.env.LEAD_TO_VENTURE, // United Kingdom
-  whitecrown: process.env.LEAD_TO_WHITECROWN, // France
+  absolvo: process.env.LEAD_TO_ABSOLVO || PARTNER_EMAILS.absolvo,
+  atares: process.env.LEAD_TO_ATARES || PARTNER_EMAILS.atares,
+  ceres: process.env.LEAD_TO_CERES || PARTNER_EMAILS.ceres,
+  venture: process.env.LEAD_TO_VENTURE || PARTNER_EMAILS.venture,
+  whitecrown: process.env.LEAD_TO_WHITECROWN || PARTNER_EMAILS.whitecrown,
   any: FALLBACK_RECIPIENT,
 };
 
