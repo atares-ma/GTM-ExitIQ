@@ -17,11 +17,11 @@ const FALLBACK_RECIPIENT = 'contact@globaltechmergers.com';
 // Per-partner routing. Keys match the ExitIQ partner dropdown; fill in the real
 // addresses. Anything unknown or empty falls back to GTM central.
 const PARTNER_RECIPIENTS = [
-    'absolvo'    => '',                             // Hungary
-    'atares'     => 'exitiq@atares.team',           // Germany
-    'ceres'      => '',                             // Sweden
-    'venture'    => '',                             // United Kingdom
-    'whitecrown' => '',                             // France
+    'absolvo'    => 'contact@globaltechmergers.com', // Hungary — placeholder until the firm's inbox arrives
+    'atares'     => 'exitiq@atares.team',            // Germany
+    'ceres'      => 'contact@globaltechmergers.com', // Sweden — placeholder
+    'venture'    => 'contact@globaltechmergers.com', // United Kingdom — placeholder
+    'whitecrown' => 'contact@globaltechmergers.com', // France — placeholder
     'any'        => 'contact@globaltechmergers.com',
 ];
 // Must be a real mailbox on the sending domain, or Strato/SPF will reject it.
