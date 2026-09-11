@@ -30,10 +30,10 @@ const FALLBACK_RECIPIENT = process.env.LEAD_RECIPIENT ?? 'contact@globaltechmerg
  */
 const PARTNER_EMAILS: Record<string, string> = {
   atares: 'exitiq@atares.team', // Germany
-  absolvo: 'contact@globaltechmergers.com', // Hungary — placeholder until the firm's inbox arrives
-  ceres: 'contact@globaltechmergers.com', // Sweden — placeholder
-  venture: 'contact@globaltechmergers.com', // United Kingdom — placeholder
-  whitecrown: 'contact@globaltechmergers.com', // France — placeholder
+  absolvo: 'L.horgos@absolvo.eu', // Hungary
+  ceres: 'patrik.siberg@ceresadvisors.se', // Sweden
+  venture: 'gary.smith@venturecorporatefinance.com', // United Kingdom
+  whitecrown: 'nicolas@whitecrown.fr', // France
 };
 
 const PARTNER_RECIPIENTS: Record<string, string | undefined> = {
